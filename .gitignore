@@ -1,0 +1,11 @@
+# models
+models/*
+
+# tensorboards
+tbs/*
+
+# virtualenv
+ppo-env/*
+
+# cache
+__pycache__/* 
