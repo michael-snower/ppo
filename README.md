@@ -19,8 +19,7 @@ pip install -r requirements.txt
 ```
 
 Then, I recommend training a model in a simple environment, like Cartpole. Use this command
-to do that. This will also log the results to tensorboard and save the model (Training should
-take less than 10 min. on most machines built in the last few years):
+to do that. This will also log the results to tensorboard and save the model (Training takes about 5 min. on my 2018 Macbook Pro):
 ```
 py runner.py --env-id='CartPole-v1' --learning-rate='lambda x: x * 1e-4' --shared-network='fc3'  --num-batches=500 --tb-path='./tbs/CartPole-v1/' --log-every=1 --save-path='./models/CartPole-v1/' --save-every=50
 ```
@@ -48,7 +47,7 @@ python runner.py --env-id='SpaceInvadersNoFrameskip-v4' --shared-network='cnn_ls
 ```
 
 # Hyperparameter Tips
-Annealing the learning rate is very important if you would like to converge on an optimal solution (not annealing can lead to great performance, but the model usually becomes unstable even if it performs well for a short time). Playing with multiple environments is also important. 4+ is usually needed.
+Annealing the learning rate is very important if you would like to converge on an optimal solution (not annealing will usually result in an unstable model even if it performs well for a short time). Playing with multiple environments is also important. 4+ is usually needed.
 
 You may find more information on hyperparameters in the Schulman PPO Paper and Stooke & Abbeel's paper: https://arxiv.org/pdf/1803.02811.pdf
 
