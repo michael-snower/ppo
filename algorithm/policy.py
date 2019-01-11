@@ -5,11 +5,9 @@ import cv2 as cv
 
 # python libraries
 from time import sleep
-from pdb import set_trace as bp
 
 # local dependencies
-from networks import NetworkBuilder
-# from networks import build_network
+from algorithm.parts.networks import NetworkBuilder
 
 class Policy(object):
 
@@ -67,17 +65,18 @@ class Policy(object):
 
     def _calc_entropy(self, actor_logits):
         '''
-        Calculates entropy with more numerical stability. From OpenAI Baselines.
+        Calculates entropy. Subtract largest value for numerical stability.
         '''
-        a0 = actor_logits - tf.reduce_max(actor_logits, axis=-1, keepdims=True)
-        ea0 = tf.exp(a0)
-        z0 = tf.reduce_sum(ea0, axis=-1, keepdims=True)
-        p0 = ea0 / z0
-        return tf.reduce_sum(p0 * (tf.log(z0) - a0), axis=-1)
+        l = actor_logits - tf.reduce_max(actor_logits, axis=-1, keepdims=True)
+        l_exp = tf.exp(l)
+        z = tf.reduce_sum(l_exp, axis=-1, keepdims=True)
+        probs = l_exp / z
+        return tf.reduce_sum(probs * (tf.log(z) - l), axis=-1)
 
     def _sample(self, actor_logits):
         '''
-        Samples random action. From OpenAI Baselines.
+        Samples random action by adding Gumbel noise.
+        See Jang et. al for information on Gumbel-Softmax https://arxiv.org/pdf/1611.01144.pdf
         '''
-        u = tf.random_uniform(tf.shape(actor_logits), dtype=actor_logits.dtype)
-        return tf.argmax(actor_logits - tf.log(-tf.log(u)), axis=-1)
+        noise = tf.random_uniform(tf.shape(actor_logits), dtype=tf.float32)
+        return tf.argmax(actor_logits - tf.log(-tf.log(noise)), axis=-1)

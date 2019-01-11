@@ -5,9 +5,7 @@ import numpy as np
 from collections import defaultdict
 import gym
 from gym.wrappers import FlattenDictWrapper
-from atari_wrappers import make_atari, wrap_deepmind
-
-from pdb import set_trace as bp
+from env.atari_wrappers import make_atari, wrap_deepmind
 
 class Env(object):
 
@@ -51,7 +49,7 @@ class Env(object):
 
 class EnvWrapper(object):
 
-    def __init__(self, env, env_num):
+    def __init__(self, env, env_num, env_type):
         self.game = env
         self.env_num = env_num
         self.num_actions = self.game.action_space.n
@@ -89,9 +87,11 @@ class EnvWrapper(object):
         '''
         return self.game.reset()
 
-'''
-The below code builds environments based on type. Adapted from OpenAI Baselines.
-'''
+
+# The below code builds environments based on type. Adapted from OpenAI Baselines
+# and Deepmind repos. Note that OpenAI Baselines has additional environment
+# wrappers for robotics simulations so these may not work well.
+
 def build_env(env_id, env_num):
     env_type = _get_env_type(env_id)
     if env_type == 'atari':
@@ -100,10 +100,10 @@ def build_env(env_id, env_num):
             keys = env.observation_space.spaces.keys()
             env = gym.wrappers.FlattenDictWrapper(env, dict_keys=list(keys))
         env = wrap_deepmind(env, frame_stack=4)
-        return EnvWrapper(env, env_num)
+        return EnvWrapper(env, env_num, env_type)
     else:
         env = gym.make(env_id)
-        return EnvWrapper(env, env_num)
+        return EnvWrapper(env, env_num, env_type)
 
 def _get_env_type(env_id):
     # Re-parse the gym registry, since we could have new envs since last time.

@@ -2,10 +2,6 @@
 import tensorflow as tf
 import tensorflow.contrib.layers as layers
 import numpy as np
-import cv2 as cv
-
-# python libraries
-from pdb import set_trace as bp
 
 class NetworkBuilder(object):
     '''
@@ -25,7 +21,8 @@ class NetworkBuilder(object):
 
     def cnn(self, X):
         '''
-        Convolutional neural net from OpenAI Baselines.
+        Convolutional neural net with the Architecture described in Deepmind's
+        "Human-level control through deep reinforcement learning"
         Call with 'cnn'
         '''
         X = tf.cast(X, tf.float32) / 255.
@@ -42,8 +39,8 @@ class NetworkBuilder(object):
 
     def cnn_lstm(self, X, steps, lstm_size=128):
         '''
-        Convolutional lstm.
-        Call with 'conv_lstm'
+        Adds an LSTM cell to the cnn above.
+        Call with 'cnn_lstm'
         '''
         # feed forward through conv and fully connected layers
         rec_masks = tf.placeholder(tf.float32, [steps], name='pl_rm')
@@ -69,10 +66,8 @@ class NetworkBuilder(object):
 
     def fc2_small(self, X, size=64):
         '''
-        Two fc layers. Orthogonal initialization is used as in OpenAI Baselines.
-        This has shown to perform better than Xavier initialization. Though,
-        He initialization has not been evaluated.
-        Call with 'fc3'. 
+        Two fc layers.
+        Call with 'fc2_small'. 
         '''
         h1 = self._fc(X, size=size, activ='relu', wi='ortho', bi=0.0,
                       wi_scale=np.sqrt(2))
@@ -82,9 +77,7 @@ class NetworkBuilder(object):
 
     def fc3(self, X, size=256):
         '''
-        Two fc layers. Orthogonal initialization is used as in OpenAI Baselines.
-        This has shown to perform better than Xavier initialization. Though,
-        He initialization has not been evaluated.
+        Two fc layers.
         Call with 'fc3'. 
         '''
         h1 = self._fc(X, size=size, activ='relu', wi='ortho', bi=0.0,
@@ -97,9 +90,7 @@ class NetworkBuilder(object):
 
     def actor_fc1(self, X, num_actions):
         '''
-        Actor with 1 fully connected layer. Orthogonal initialization with 0.01
-        scale is used as in OpenAI Baselines. Empirical tests have shown this to
-        be numerically stable.
+        Actor with 1 fully connected layer.
         Call with 'actor_fc1'
         '''
         h1 = self._fc(X, size=num_actions, activ=None, wi='ortho', bi=0.0,
@@ -109,8 +100,6 @@ class NetworkBuilder(object):
     def critic_fc1(self, X):
         '''
         Critic (value function) with 1 fully connected layer.
-        Orthogonal initialization with 1.0 scale is used as in OpenAI Baselines.
-        Empirical tests have shown this to be numerically stable.
         Call with 'critic_fc1'
         '''
         h1 = self._fc(X, size=1, activ=None, wi='ortho', bi=0.0,

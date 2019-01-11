@@ -5,7 +5,6 @@ import cv2 as cv
 
 # python libraries
 from time import sleep
-from pdb import set_trace as bp
 
 class Worker(object):
 

@@ -1,10 +1,10 @@
-# helper libraries
+# python libraries
 from argparse import ArgumentParser
 from collections import namedtuple
-from pdb import set_trace as bp
+import os
 
-# repo files
-from model import Model
+# local dependencies
+from algorithm.model import Model
 
 PolicySettings = namedtuple('PolicySettings', '''shared_network actor_network
                                                  critic_network''')
@@ -18,6 +18,11 @@ def main(env_id, runtime_settings, policy_settings, hyperparams):
     '''
     Initializes model, loads params if necessary, then trains or tests as specified.
     '''
+    # create models and tensorboard directories, if necessary
+    if not os.path.exists('./models'):
+        os.makedirs('./models')
+    if not os.path.exists('./tbs'):
+        os.makedirs('./tbs')
     model = Model(env_id, policy_settings, hyperparams)
     if runtime_settings.restore_path:
         model.saver.restore(model.sess, runtime_settings.restore_path)
@@ -95,11 +100,11 @@ def parse_args(args):
 if __name__ == '__main__':
     parser = ArgumentParser()
     # environment id which defines reward shaping
-    parser.add_argument('--env-id', default='snek-v1',
+    parser.add_argument('--env-id', default='CartPole-v1',
                         help='Type of env. Check snek.py file for all options.')
 
     # policy settings
-    parser.add_argument('--shared-network', default='conv_lstm',
+    parser.add_argument('--shared-network', default='fc3',
                         help='Type of network. Options can be found in networks.py')
     parser.add_argument('--actor-network', default='actor_fc1',
                         help='Type of network. Options can be found in networks.py')

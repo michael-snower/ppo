@@ -1,26 +1,24 @@
 # analytical tools
 import tensorflow as tf
 import numpy as np
-import cv2 as cv
 
 # python libraries
 import time
 import itertools
-from pdb import set_trace as bp
 
 # local dependencies
-from environment import Env, build_env
-from policy import Policy
-from optimizers import build_optimizer
-from worker import Worker
+from env.environment import build_env
+from algorithm.policy import Policy
+from algorithm.worker import Worker
+from algorithm.parts.optimizers import build_optimizer
 
 class Model(object):
-
+    '''
+    This class has methods for training, testing, logging and saving.
+    '''
     def __init__(self, env_id, policy_settings, hyperparams):
         self.hyperparams = hyperparams
-        # Build env
-        # self.envs = [Env(env_id, env_num) for env_num in\
-        #              range(self.hyperparams.num_envs)]
+        # Build environments
         self.envs = [build_env(env_id, env_num) for env_num in\
                      range(self.hyperparams.num_envs)]
         # Build policy which includes methods to access logits, value, entropy etc...
@@ -42,7 +40,7 @@ class Model(object):
         self.saver = tf.train.Saver(max_to_keep=10)
         self.sess = tf.Session()
         self.sess.run(tf.global_variables_initializer())
-        # build worker to play games
+        # build worker, which will be used to collect data from envs
         self.worker = Worker(self.play_policy, self.policy, self.sess,
                              self.hyperparams.env_steps, self.hyperparams.gamma,
                              self.hyperparams.lam)
@@ -208,15 +206,3 @@ class Model(object):
         '''
         self.saver.save(self.sess, save_path, global_step=self.global_step)
         print('Saved model to: {}-{}'.format(save_path, self.global_step))
-
-           # def _show_info(state, action, reward, done, info, step_num):
-        #     out = state.copy()
-        #     out = (out + 1) * 127.5
-        #     #out[out == 101] = 200
-        #     with open('./test_images/log.txt', 'a+') as f:
-        #         f.write('{}: {} {} {} {} {} \n'.format(step_num, action, reward, done, info['score'], info['distfood']))
-        #     cv.imwrite('./test_images/{}.png'.format(step_num), out)
-        #     return out
-        # imgs = [_show_info(s, a, r, d, sc, i) for i, (s, a, r, d, sc) in\
-        #         enumerate(zip(states[:-1], actions, rewards, dones, infos))]
-        # exit()

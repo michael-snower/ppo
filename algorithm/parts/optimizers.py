@@ -2,10 +2,6 @@
 import tensorflow as tf
 from tensorflow.python import debug as tf_debug
 import numpy as np
-import cv2 as cv
-
-# python libraries
-from pdb import set_trace as bp
 
 optimizers = {}
 
@@ -18,7 +14,8 @@ def register(opt_name):
 def adam():
     def opt_fn(neglog_params, values, entropies, **kwargs):
         '''
-        Kwargs are placeholders.
+        This is the PPO Loss Function from the Schulman et al paper with
+        the addition of value loss clipping.
         '''
         learning_rate = kwargs.get('policy/pl_lr')
         grad_clip = kwargs.get('policy/pl_gc')
@@ -37,8 +34,8 @@ def adam():
             pr_clipped = tf.clip_by_value(pr, 1-eps, 1+eps)
             policy_loss = tf.reduce_mean(tf.maximum(-pr * advantages,
                                                     -pr_clipped * advantages))
-            approxkl = .5 * tf.reduce_mean(tf.square(neglog_params - old_A))
-            clipfrac = tf.reduce_mean(tf.to_float(tf.greater(tf.abs(pr - 1.0), eps)))
+            approx_kldiv = 0.5 * tf.reduce_mean(tf.square(neglog_params - old_A))
+            clip_frac = tf.reduce_mean(tf.to_float(tf.greater(tf.abs(pr - 1.0), eps)))
             # Clip value to calc value loss
             v_clip = old_V + tf.clip_by_value(values - old_V, -eps, eps)
             value_loss = 0.5 * tf.reduce_mean(tf.maximum(tf.square(values - returns), 
@@ -56,7 +53,7 @@ def adam():
             clipped_grads, _grad_norm = tf.clip_by_global_norm(grads, grad_clip)
             grads_and_var = list(zip(clipped_grads, var))
             trainer = adam.apply_gradients(grads_and_var)
-        return [trainer, policy_loss, value_loss, entropy, approxkl, clipfrac]
+        return [trainer, policy_loss, value_loss, entropy, approx_kldiv, clip_frac]
     return opt_fn
 
 def build_optimizer(name):
