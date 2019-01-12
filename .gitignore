@@ -8,4 +8,7 @@ tbs/*
 ppo-env/*
 
 # cache
-__pycache__/* 
+__pycache__/*
+*.pyc
+env/__pycache__/*
+algorithm/__pycache__/* 
