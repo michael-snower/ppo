@@ -1,13 +1,13 @@
 # PPO
-An Implementation of Proximal Policy Optimization. Based off of Schulman's Paper (https://arxiv.org/pdf/1707.06347.pdf) and OpenAI Baselines (https://github.com/openai/baselines)
+An Implementation of Proximal Policy Optimization. Based off of Schulman et. al's Paper (https://arxiv.org/pdf/1707.06347.pdf) and OpenAI Baselines (https://github.com/openai/baselines)
 
-Three of the points that make this project unique are:
+Three useful aspects of this project are:
 
 1. Simplicity. Almost of the code in this repository is original. The only code taken directly from OpenAI Baselines is the atari_wrappers.py file and few weight initialization methods in the networks.py file. Since the sole purpose of this repository is to be PPO algorithm, it will hopefully be more easy to use than the Baselines implementation, which is more broad in scope. Moreover, early tests have demonstrated near-competitive performance with the Baselines implementation.
 
 2. Out of the box Tensorboard Integration. This repository has Tensorboard Integration for loss values, rewards, and more. Simply add a command line flag to indicate you would like the results to be logged to Tensorboard.
 
-3. Optimizers file. The optimizers.py file has support to easily add additional optimizer methods. Adam is used by default, but, if one wanted to create a new optimizer using a different GD algorithm this can be easily done.
+3. Optimizers file. The optimizers.py file has support to easily add additional optimizer methods. Adam is used by default, but, if one wanted to create a new optimizer using a different algorithm this can be easily done.
 
 # Limitations
 This repository does not support parellizing actors, which can make it slower than Baselines. It also does not fully integrate the OpenAI wrappers for Mujocu and other non-Atari environments.
