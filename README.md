@@ -13,7 +13,7 @@ Three useful aspects of this project are:
 This repository does not support parellizing actors, which can make it slower than Baselines. It also does not fully integrate the OpenAI wrappers for Mujocu and other non-Atari environments.
 
 # Getting Started
-Install the dependencies with the following command:
+Python 3.5+ is recommended. Install the dependencies with the following command:
 ```
 pip install -r requirements.txt
 ```
@@ -34,14 +34,14 @@ Launch your Tensorboard:
 tensorboard --logdir='./tbs/CartPole-v1/'
 ```
 
-# Training Pong
-The following command trained an agent to achieve near perfect scores on Pong. Also, my trained model and Tensorboard are linked to below. My model was trained with a NVIDIA Tesla P-100 on Google Cloud.
+# Train Pong
+The following command trains an agent to achieve near perfect scores on Pong. A pre-trained model and tensorboard can be found in the trained_models directory.
 ```
 python runner.py --env-id='PongNoFrameskip-v4' --shared-network='cnn' --learning-rate="lambda x: x * 3e-4" --num-batches=10000 --env-steps=128 --num-envs=4 --eps=0.1 --tb-path="./tbs/PongNoFrameskip-v4/" --save-path="./models/PongNoFrameskip-v4/" --log-every=1 --save-every=500
 ```
 
-# Training Space Invaders
-The following command trained an agent to achieve success on Space Invaders. Also, my trained model and Tensorboard are linked to below. My model was trained with a NVIDIA Tesla P-100 on Google Cloud.
+# Train Space Invaders
+The following command trains a Space Invaders agent. A pre-trained model and tensorboard can be found in the trained_models directory. While this agent will be very good at Space Invaders, training for additional time (maybe 40000 batches) will likely create an even better one.
 ```
 python runner.py --env-id='SpaceInvadersNoFrameskip-v4' --shared-network='cnn_lstm' --learning-rate="lambda x: x * 3e-4" --num-batches=20000 --env-steps=128 --num-envs=8 --eps=0.1 --tb-path="./tbs/SpaceInvadersNoFrameskip-v4/" --save-path="./models/SpaceInvadersNoFrameskip-v4/" --log-every=1 --save-every=500
 ```
